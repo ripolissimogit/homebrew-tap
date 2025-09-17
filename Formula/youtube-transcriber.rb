@@ -3,7 +3,7 @@ class YoutubeTranscriber < Formula
   homepage "https://github.com/ripolissimogit/youtube-transcriber"
   url "https://github.com/ripolissimogit/youtube-transcriber/archive/refs/heads/main.zip"
   version "2.2.0"
-  sha256 "8b253e9470bda96eeb6f86c310170abb99f40456a5212d2f32a758d849563b92"
+  sha256 :no_check
   
   depends_on "yt-dlp"
   depends_on "ffmpeg"
