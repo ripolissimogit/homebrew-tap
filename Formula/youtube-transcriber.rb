@@ -10,8 +10,8 @@ class YoutubeTranscriber < Formula
   depends_on "python@3.12"
   
   def install
-    # Install Python dependencies
-    system "pip3", "install", "requests"
+    # Install Python dependencies using Homebrew's resource system
+    system "python3", "-m", "pip", "install", "--break-system-packages", "requests"
     
     # Install the script
     bin.install "transcribe"
