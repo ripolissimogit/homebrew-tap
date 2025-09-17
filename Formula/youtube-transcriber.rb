@@ -2,7 +2,7 @@ class YoutubeTranscriber < Formula
   desc "Trascrivi video YouTube e file audio con Groq AI"
   homepage "https://github.com/ripolissimogit/youtube-transcriber"
   url "https://github.com/ripolissimogit/youtube-transcriber/archive/refs/heads/main.zip"
-  version "1.0.2"
+  version "1.0.3"
   sha256 "ab34f1c012dad17a62662093e15c6766b2020bff58d1b746ef5cf3de59979eaa"
   
   depends_on "yt-dlp"
