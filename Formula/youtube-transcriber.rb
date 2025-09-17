@@ -2,7 +2,7 @@ class YoutubeTranscriber < Formula
   desc "Trascrivi video YouTube e file audio con Groq AI"
   homepage "https://github.com/ripolissimogit/youtube-transcriber"
   url "https://github.com/ripolissimogit/youtube-transcriber/archive/refs/heads/main.zip"
-  version "2.1.0"
+  version "2.1.1"
   sha256 "af952f5454db98d8c2aa53d5b91398c6fa78f6e8c75654e0131e4593c81f1e24"
   
   depends_on "yt-dlp"
@@ -10,8 +10,8 @@ class YoutubeTranscriber < Formula
   depends_on "python@3.12"
   
   def install
-    # Install Python dependencies
-    system "python3", "-m", "pip", "install", "--break-system-packages", "requests"
+    # Install Python dependencies with proper error handling
+    system "python3", "-m", "pip", "install", "--break-system-packages", "--user", "requests"
     
     # Install both scripts
     bin.install "transcribe"
