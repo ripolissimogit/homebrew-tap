@@ -10,11 +10,41 @@ class YoutubeTranscriber < Formula
   depends_on "python@3.12"
   
   def install
-    # Install Python dependencies using Homebrew's resource system
+    # Install Python dependencies
     system "python3", "-m", "pip", "install", "--break-system-packages", "requests"
     
     # Install the script
     bin.install "transcribe"
+    
+    # Prompt for API key during installation
+    puts "\n🔑 Configurazione Groq API Key"
+    puts "Ottieni una chiave gratuita da: https://console.groq.com/keys"
+    print "Inserisci la tua chiave API Groq: "
+    api_key = STDIN.gets.chomp
+    
+    if !api_key.empty?
+      # Add to shell profiles
+      zshrc = File.expand_path("~/.zshrc")
+      bash_profile = File.expand_path("~/.bash_profile")
+      
+      [zshrc, bash_profile].each do |profile|
+        if File.exist?(profile)
+          content = File.read(profile)
+          unless content.include?("GROQ_API_KEY")
+            File.open(profile, "a") do |f|
+              f.puts "\n# YouTube Transcriber"
+              f.puts "export GROQ_API_KEY=\"#{api_key}\""
+            end
+          end
+        end
+      end
+      
+      puts "✅ Chiave API configurata!"
+      puts "Riavvia il terminale o esegui: source ~/.zshrc"
+    else
+      puts "⚠️ Chiave non inserita. Configurala manualmente:"
+      puts "export GROQ_API_KEY='la_tua_chiave'"
+    end
   end
   
   def caveats
