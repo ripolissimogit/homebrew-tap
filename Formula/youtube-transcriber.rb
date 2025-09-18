@@ -2,7 +2,7 @@ class YoutubeTranscriber < Formula
   desc "Trascrivi video YouTube e file audio con Groq AI"
   homepage "https://github.com/ripolissimogit/youtube-transcriber"
   url "https://github.com/ripolissimogit/youtube-transcriber/archive/refs/heads/main.zip"
-  version "2.3.0"
+  version "2.4.0"
   sha256 "f4f0f3e9fc0d115f4c9d1404ac6647e5c03b5176a69dda3f6d253d3e0f24caab"
   
   depends_on "yt-dlp"
@@ -41,6 +41,8 @@ class YoutubeTranscriber < Formula
     # Create symlinks for easy access
     bin.install_symlink "transcribe-wrapper" => "yt-transcribe"
     bin.install_symlink "transcribe-wrapper" => "yt-trascrivi"
+    bin.install_symlink "transcribe-wrapper" => "trascrivi-url"
+    bin.install_symlink "transcribe-wrapper" => "sbobina"
     
     # Prompt for API key during installation
     puts "\n🔑 Configurazione Groq API Key"
@@ -82,14 +84,16 @@ class YoutubeTranscriber < Formula
         trascrivi "https://youtube.com/watch?v=VIDEO_ID"   # Comando italiano
         yt-transcribe https://youtube.com/watch?v=VIDEO_ID # Senza virgolette!
         yt-trascrivi https://youtube.com/watch?v=VIDEO_ID  # Senza virgolette!
+        trascrivi-url https://youtube.com/watch?v=VIDEO_ID # Alias trascrivi
+        sbobina https://youtube.com/watch?v=VIDEO_ID       # Alias sbobina
       
       🔧 CONFIGURAZIONE:
         export GROQ_API_KEY="la_tua_chiave_groq"
         
       Ottieni una chiave gratuita da: https://console.groq.com/keys
       
-      💡 I comandi yt-transcribe e yt-trascrivi gestiscono automaticamente
-         gli URL YouTube senza bisogno di virgolette!
+      💡 I comandi yt-transcribe, yt-trascrivi, trascrivi-url e sbobina 
+         gestiscono automaticamente gli URL YouTube senza bisogno di virgolette!
     EOS
   end
   
