@@ -1,8 +1,8 @@
 class YoutubeTranscriber < Formula
-  desc "Trascrivi video YouTube e file audio con Groq AI + OpenAI"
+  desc "Trascrivi video YouTube e file audio con Groq AI + OpenAI (entrambi obbligatori)"
   homepage "https://github.com/ripolissimogit/youtube-transcriber"
   url "https://github.com/ripolissimogit/youtube-transcriber/archive/refs/heads/main.zip"
-  version "3.0.0"
+  version "3.1.0"
   sha256 :no_check
   
   depends_on "yt-dlp"
@@ -44,16 +44,16 @@ class YoutubeTranscriber < Formula
     bin.install_symlink "transcribe-wrapper" => "trascrivi-url"
     bin.install_symlink "transcribe-wrapper" => "sbobina"
     
-    # Prompt for API keys during installation
-    puts "\n🔑 Configurazione API Keys"
-    puts "1. Groq API (OBBLIGATORIA): https://console.groq.com/keys"
-    puts "2. OpenAI API (OPZIONALE): https://platform.openai.com/api-keys"
+    # Prompt for BOTH API keys during installation (MANDATORY)
+    puts "\n🔑 Configurazione API Keys (ENTRAMBE OBBLIGATORIE)"
+    puts "1. Groq API: https://console.groq.com/keys"
+    puts "2. OpenAI API: https://platform.openai.com/api-keys"
     print "Inserisci la tua chiave Groq API: "
     groq_key = STDIN.gets.chomp
-    print "Inserisci la tua chiave OpenAI (Enter per saltare): "
+    print "Inserisci la tua chiave OpenAI API: "
     openai_key = STDIN.gets.chomp
     
-    if !groq_key.empty?
+    if !groq_key.empty? && !openai_key.empty?
       # Add to shell profiles
       zshrc = File.expand_path("~/.zshrc")
       bash_profile = File.expand_path("~/.bash_profile")
@@ -63,31 +63,27 @@ class YoutubeTranscriber < Formula
           content = File.read(profile)
           unless content.include?("GROQ_API_KEY")
             File.open(profile, "a") do |f|
-              f.puts "\n# YouTube Transcriber"
+              f.puts "\n# YouTube Transcriber v3.1"
               f.puts "export GROQ_API_KEY=\"#{groq_key}\""
-              if !openai_key.empty?
-                f.puts "export OPENAI_API_KEY=\"#{openai_key}\""
-              end
+              f.puts "export OPENAI_API_KEY=\"#{openai_key}\""
             end
           end
         end
       end
       
-      puts "✅ Chiavi API configurate!"
-      if !openai_key.empty?
-        puts "🤖 OpenAI abilitato per miglioramento trascrizioni"
-      end
+      puts "✅ Entrambe le chiavi API configurate!"
       puts "Riavvia il terminale o esegui: source ~/.zshrc"
     else
-      puts "⚠️ Chiave Groq non inserita. Configurala manualmente:"
-      puts "export GROQ_API_KEY='la_tua_chiave'"
-      puts "export OPENAI_API_KEY='la_tua_chiave' # opzionale"
+      puts "⚠️ ATTENZIONE: Entrambe le chiavi sono obbligatorie!"
+      puts "Configurale manualmente:"
+      puts "export GROQ_API_KEY='la_tua_chiave_groq'"
+      puts "export OPENAI_API_KEY='la_tua_chiave_openai'"
     end
   end
   
   def caveats
     <<~EOS
-      YouTube Transcriber v3.0 installato con successo!
+      YouTube Transcriber v3.1 installato con successo!
       
       🎯 COMANDI DISPONIBILI:
         transcribe "https://youtube.com/watch?v=VIDEO_ID"  # Comando originale
@@ -97,17 +93,22 @@ class YoutubeTranscriber < Formula
         trascrivi-url https://youtube.com/watch?v=VIDEO_ID # Alias trascrivi
         sbobina https://youtube.com/watch?v=VIDEO_ID       # Alias sbobina
       
-      🔧 CONFIGURAZIONE:
-        export GROQ_API_KEY="la_tua_chiave_groq"          # OBBLIGATORIA
-        export OPENAI_API_KEY="la_tua_chiave_openai"      # OPZIONALE
+      🔧 CONFIGURAZIONE (ENTRAMBE OBBLIGATORIE):
+        export GROQ_API_KEY="la_tua_chiave_groq"
+        export OPENAI_API_KEY="la_tua_chiave_openai"
         
-      🆕 NOVITÀ v3.0:
-        • Integrazione OpenAI per miglioramento trascrizioni
-        • Correzione automatica errori di battitura
-        • Divisione in paragrafi logici
+      🆕 FLUSSO v3.1 (TUTTO AUTOMATICO):
+        1. 🎤 Trascrizione audio (Groq Whisper)
+        2. 🤖 Correzione errori formali (OpenAI)
+        3. 📋 Generazione sintesi automatica
+        4. 📊 Recupero metadati video completi
+        5. 💾 Salvataggio automatico file .txt
+      
+      📄 OUTPUT FINALE:
+        • Metadati video (titolo, canale, data, link)
         • Sintesi automatica del contenuto
-        • Metadati video completi (titolo, canale, data, ecc.)
-        • File di output arricchiti con tutte le informazioni
+        • Trascrizione migliorata e formattata
+        • Salvataggio automatico in file .txt
       
       💡 I comandi yt-transcribe, yt-trascrivi, trascrivi-url e sbobina 
          gestiscono automaticamente gli URL YouTube senza bisogno di virgolette!
