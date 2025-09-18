@@ -2,7 +2,7 @@ class YoutubeTranscriber < Formula
   desc "Trascrivi video YouTube e file audio con Groq AI"
   homepage "https://github.com/ripolissimogit/youtube-transcriber"
   url "https://github.com/ripolissimogit/youtube-transcriber/archive/refs/heads/main.zip"
-  version "2.2.0"
+  version "2.3.0"
   sha256 :no_check
   
   depends_on "yt-dlp"
@@ -10,14 +10,42 @@ class YoutubeTranscriber < Formula
   depends_on "python@3.12"
   
   def install
-    # Install both scripts (no external dependencies needed)
+    # Install main script
     bin.install "transcribe"
     bin.install "trascrivi"
+    
+    # Create global wrapper that handles URLs without quotes
+    (bin/"transcribe-wrapper").write <<~EOS
+      #!/bin/bash
+      
+      # Global wrapper for YouTube Transcriber
+      TRANSCRIBER_PATH="#{bin}/transcribe"
+      
+      # If no arguments, pass to transcriber (interactive mode)
+      if [ $# -eq 0 ]; then
+          exec "$TRANSCRIBER_PATH"
+      fi
+      
+      # If argument contains youtube.com or youtu.be, handle automatically
+      if [[ "$1" == *"youtube.com"* ]] || [[ "$1" == *"youtu.be"* ]]; then
+          exec "$TRANSCRIBER_PATH" "$1"
+      else
+          # For local files or other arguments, pass as-is
+          exec "$TRANSCRIBER_PATH" "$@"
+      fi
+    EOS
+    
+    # Make wrapper executable
+    chmod 0755, bin/"transcribe-wrapper"
+    
+    # Create symlinks for easy access
+    bin.install_symlink "transcribe-wrapper" => "yt-transcribe"
+    bin.install_symlink "transcribe-wrapper" => "yt-trascrivi"
     
     # Prompt for API key during installation
     puts "\n🔑 Configurazione Groq API Key"
     puts "Ottieni una chiave gratuita da: https://console.groq.com/keys"
-    print "Inserisci la tua chiave API Groq: "
+    print "Inserisci la tua chiave API Groq (premi Enter per saltare): "
     api_key = STDIN.gets.chomp
     
     if !api_key.empty?
@@ -47,19 +75,26 @@ class YoutubeTranscriber < Formula
   
   def caveats
     <<~EOS
-      Per usare YouTube Transcriber, configura la tua chiave API Groq:
+      YouTube Transcriber installato con successo!
       
+      🎯 COMANDI DISPONIBILI:
+        transcribe "https://youtube.com/watch?v=VIDEO_ID"  # Comando originale
+        trascrivi "https://youtube.com/watch?v=VIDEO_ID"   # Comando italiano
+        yt-transcribe https://youtube.com/watch?v=VIDEO_ID # Senza virgolette!
+        yt-trascrivi https://youtube.com/watch?v=VIDEO_ID  # Senza virgolette!
+      
+      🔧 CONFIGURAZIONE:
         export GROQ_API_KEY="la_tua_chiave_groq"
-      
+        
       Ottieni una chiave gratuita da: https://console.groq.com/keys
       
-      Uso:
-        transcribe "https://youtube.com/watch?v=VIDEO_ID"
-        transcribe "/path/to/audio.mp3"
+      💡 I comandi yt-transcribe e yt-trascrivi gestiscono automaticamente
+         gli URL YouTube senza bisogno di virgolette!
     EOS
   end
   
   test do
     system "#{bin}/transcribe", "--help"
+    system "#{bin}/yt-transcribe", "--help"
   end
 end
